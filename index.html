@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>Twiltool</title>
+</head>
+<style>
+
+body {
+	background-color: #3B444C;
+	color: white;
+}
+
+textarea
+{resize:none;
+background-color: #4e565d;
+}
+
+.popuptext
+{
+position: absolute;
+right: 25px;
+top: 200px;
+color: white;
+font-size:16px;
+font-family: "monospace";
+line-height: 80%;
+}
+
+#myProgress {
+width: 100%;
+background-color: #d7d9db;
+}
+
+#myBar {
+width: 1%;
+height: 30px;
+background-color: #c4c6c9;
+}
+
+footer { 
+opacity: 0.5;
+position: absolute;
+right: 75px;
+top: 230px;
+}
+
+.senttext{
+position: absolute;
+left: 25px;
+bottom: 10px;
+color: black;
+font-family: "monospace";
+}
+
+.senttext2{
+position: absolute;
+left: 25px;
+bottom: 25px;
+color: black;
+font-family: "monospace";
+}
+
+.dropdown{
+position: absolute;
+left: 350px;
+top: 100px;	
+}
+
+h1{
+font-family: "Bebas Neue";
+color: white;
+font-size:48px;
+line-height: 20%;
+position: absolute;
+left: 350px;
+top: 5px;	
+}
+
+.Reset{
+position: absolute;
+right: 120px;
+top: 100px;	
+}
+
+.Getresp{
+position: absolute;
+right: 10px;
+top: 100px;	
+}
+
+.Iccid{
+position: absolute;
+left: 80px;
+bottom: 170px; 
+}
+
+</style>
+
+<body>
+
+<h1>MASS SMS TOOL</h1>
+<div style="text-align: right">
+<div><button type= "button" id="button" class="Getresp" value="Get Responses" onclick="move();show();myFunction3();myFunction5();"disabled>GET RESPONSES!</div>
+<div><button type= "button" class="Reset" value="Reset" onclick="Reset();">Clear!</div>
+<div><button type= "button" class="Iccid" value="ICCID" onclick="ICCID();">Convert ICCIDs to Phone#'s</div>
+
+ <div class="popuptext" id="myPopup"></div>
+<br>
+<br>
+<br>
+<div class="senttext" style="display:block font-size: 10px"id="nums"></div>
+<div style="display:inline-block" class="senttext2" id="Text">Nothing Sent..</div>
+<div id="myProgress">
+<div style="display: none;" id="myBar"></div>
+</div>
+</div>
+
+<form method=post action=""example.htm">
+<table border=0>
+<tr>
+<td>Message</td>
+<td><input type='text' id="mymessagearea"  name='message'size="60"><br></td>
+<td><input type= "button" id="btnEd" value=Send onclick="myFunction();myFunction2();sender();"></td>
+</tr>
+
+<select class="dropdown" id= "mySelect"onchange="select();">
+<option >Saved Commands</option>
+<option >Query Params:</option>
+
+  <option value="">Option1</option>
+  <option value="">Option2</option>
+  <option value="">Option3</option>
+  <option value="">Option4</option>
+  <option value="">Option5</option>
+  <option value="">Option6</option>
+  <option value="">Option7</option>
+  <option value="">Option8</option>
+  <option value="">Option9</option>
+  <option >-----------------------</option>
+</select>
+  
+   <tr>
+  <td>Recipients</td>
+  <td><textarea rows=40 id="myrecipients" cols=40 name="recipients"></textarea></td>
+  </tr>
+   </table>
+   </form>
+        
+
+<p id="forcsv"></p> 
+ </body>
+
+ <footer>
+<img style="text-align: right"src="NL.png" alt="NL"></p>
+</footer>
+  
+
+  <script>
+  	var myVar;
+  	const { ipcRenderer } = require('electron');
+    function ICCID(){
+    var  argy="";
+    document.getElementById("forcsv").innerHTML = "";
+    var k =document.getElementById("myrecipients").value;
+    document.getElementById("forcsv").innerHTML = k;
+    let dude = k;
+    var argy="";
+    ipcRenderer.send('iccid-message', dude);
+    ipcRenderer.on('iccid-reply', (event, arg) => {
+    argy+= "+" + arg +"\n"; 
+    document.getElementById('myrecipients').value = argy;
+
+    })
+
+    }
+
+
+function select(){
+var o = document.getElementById("mySelect").value;
+document.getElementById("mymessagearea").value =  o;
+}
+
+
+function Reset(){
+document.getElementById('myPopup').innerHTML ="";
+document.getElementById("mymessagearea").value = "";
+document.getElementById("myrecipients").value = "";
+document.getElementById("forcsv").innerHTML = "";
+}
+
+function myFunction5() {
+myVar = setTimeout(alertFunc, 1000);
+}
+
+function myFunction3() {
+		var batch ="";
+		document.getElementById('myPopup').innerHTML ="";
+		var t =document.getElementById("myrecipients").value;
+  	let get = t; 
+  	var argnew="";
+  	ipcRenderer.send('History-message', get);
+  	ipcRenderer.on('History-reply', (event, arg) => {
+  	argnew+="<br>"+ arg; 
+    document.getElementById('myPopup').innerHTML =argnew; 
+})
+
+}
+  	
+function myFunction() {
+ var x =( "Sent:  "+  document.getElementById("mymessagearea").value);
+  document.getElementById("Text").innerHTML  = x;
+}
+
+function myFunction2() {
+button.removeAttribute("disabled");
+var y =(document.getElementById("myrecipients").value);
+document.getElementById("nums").innerHTML  = y;
+}
+
+function sender(){  		 
+  var n =document.getElementById("myrecipients").value;
+  document.getElementById("nums").innerHTML  = n;
+  let Num = n; 
+  ipcRenderer.send('Numbers', Num);
+	var z = document.getElementById("mymessagearea").value;
+  document.getElementById("Text").innerHTML  = z;
+  let Data=z; 
+  ipcRenderer.send('Payload', Data);
+  }
+
+function move() {
+  var elem = document.getElementById("myBar");   
+  var width = 1;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (width >= 100) {
+      clearInterval(id);
+    } else {
+      width++; 
+      elem.style.width = width + '%'; 
+    }}
+    myVar = setTimeout(kill, 1500);
+  }
+
+function show(){
+document.getElementById("myBar").style.display = "block";
+}
+
+function kill(){
+document.getElementById("myBar").style.display = "none";
+}
+
+</script>
+
+</html>

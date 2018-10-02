@@ -1,0 +1,18 @@
+{
+    "name": "Twiltool",
+    "productName": "Twiltool app",
+    "version": "0.1.0",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron-prebuilt": "^1.2.0"
+    },
+    "dependencies": {
+        "csv-query": "0.0.4",
+        "electron": "^2.0.9",
+        "packager": "0.0.4",
+        "twilio": "^3.19.2"
+    }
+}
