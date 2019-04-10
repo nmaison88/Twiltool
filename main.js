@@ -1,12 +1,12 @@
 const { app, BrowserWindow } = require('electron');
 var path = require ('path')
 // Your Account Sid and Auth Token from twilio.com/console
-const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';// Enter your accountSid here
-const authToken = 'your_auth_token';//enter your auth token here
-const forceDelivery= true;//for some phone numbers that dont look like cell numbers this forces the message to send anyway. 
+const accountSid = 'Twilio Account SID Here';
+const authToken = 'Twilio Auth Token Here';
+const forceDelivery= true; //allows for sending to any phone number even if it looks like a Landline
 const client = require('twilio')(accountSid, authToken, forceDelivery);
 var body ="";
-const twilnumber = '+XXXXXXXXXXX';//Enter your twilio phone number
+const twilnumber = '+Enter twilio number';
 var number = "";
 let win;
 const {ipcMain} = require('electron');
@@ -16,71 +16,72 @@ var csv = require("csv-query");
 
 
 
-
-
-
-
 ipcMain.on('Numbers', (event, arg) => {
  number = arg.split('\n');
- 
 });
 
-// Attach listener in the main process with the given ID
 ipcMain.on('Payload', (event, arg) => {
-var body = arg;
- let fish =number;
- fish.forEach(individualFish => {
-
-
-client.messages.create({to:individualFish,
-  from: twilnumber,body: 
-  body,forceDelivery:true}, 
-  function(err,message){console.log(err);});
- })   
+  var body = arg;
+  let phoneArr =number;
+    phoneArr.forEach(numberResult => {
+      client.messages.create(
+        { to: numberResult, from: twilnumber, body: body, forceDelivery: true },
+        function(err, message) {
+          console.log(err);
+        }
+      );
+    })   
 });
   
-// Attach listener in the main process with the given ID
-ipcMain.on('History-message', (event, arg) => {
-var history = arg.split('\n');
- let cat =number;
- var today = new Date();
+ipcMain.on("History-message", (event, arg) => {
+  var history = arg.split("\n");
+  let PhoneNum = number;
+  var today = new Date();
 
- var day = today.getUTCDate();
+  var day = today.getUTCDate();
 
- cat.forEach(individualCat => {
-
-client.messages.each({dateSent:day,from: individualCat,to: '+16197622804'},messages =>stringer(messages.from,messages.body)+ event.sender.send('History-reply', responseString)
-
- );
-
-
- })   
-
- })   
+  PhoneNum.forEach(PhoneNumber => {
+    client.messages.each(
+      { dateSent: day, from: PhoneNumber, to: "+16197622804" },
+      messages =>
+        stringer(messages.from, messages.body) +
+        event.sender.send("History-reply", responseString)
+    );
+  });
+});   
 
 
-ipcMain.on('iccid-message', (event, arg) => {
-var msidns = arg.split('\n');
-// console.log("MSISDNS: " + msidns); //uncomment to test that the Number are pulled from CSV file
-let dog = msidns
-dog.forEach(function(individualDog) {
-  console.log("DOG?: " +individualDog);
+ipcMain.on("iccid-message", (event, arg) => {
+  var msidns = arg.split("\n");
+  let IccidList = msidns;
+  IccidList.forEach(function(IndividualIccid) {
+    console.log("IccidList?: " + individualDog);
 
-csv.createFromFile(__dirname + "/Sim_database.csv").then(function (db) {return db.findOne({ICCID: individualDog});})
-.then(function (record) {var xtra = record["MSISDN"]; console.log(xtra); event.sender.send('iccid-reply',xtra);}).catch(function (error) {throw error;});
-})
-})
+    csv
+      .createFromFile(__dirname + "/Sim_database.csv")
+      .then(function(db) {
+        return db.findOne({ ICCID: individualDog });
+      })
+      .then(function(record) {
+        var xtra = record["MSISDN"];
+        console.log(xtra);
+        event.sender.send("iccid-reply", xtra);
+      })
+      .catch(function(error) {
+        throw error;
+      });
+  });
+});
 
 
 function stringer(){
-responseString = Array.prototype.slice.call(arguments);
-
+  responseString = Array.prototype.slice.call(arguments);
 }
 
 function createWindow() {
-    win = new BrowserWindow({ width: 900, height: 830 });
-    win.loadURL(`file://${__dirname}/index.html`);
-    icon: path.join(__dirname, 'assets/icons/png/64x64')
+  win = new BrowserWindow({ width: 900, height: 830 });
+  win.loadURL(`file://${__dirname}/index.html`);
+  icon: path.join(__dirname, "assets/icons/png/64x64");
 }
 function createMenu() {
   const application = {
@@ -102,7 +103,6 @@ function createMenu() {
       }
     ]
   }
-  
   const edit = {
     label: "Edit",
     submenu: [
@@ -150,15 +150,15 @@ function createMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
-app.on('ready',() =>
-	{
-		createWindow()
-	 createMenu()
-	})
+app.on("ready", () => {
+  createWindow();
+  createMenu();
+});
 
 
-app.on('window-all-closed', app.quit);
-app.on('before-quit', () => {
-    mainWindow.removeAllListeners('close');
-    mainWindow.close();
+app.on("window-all-closed", app.quit);
+
+app.on("before-quit", () => {
+  mainWindow.removeAllListeners("close");
+  mainWindow.close();
 });

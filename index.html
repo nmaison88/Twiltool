@@ -2,257 +2,141 @@
 <html>
 
 <head>
-
-<meta charset="UTF-8">
-<title>Twiltool</title>
+  <meta charset="UTF-8">
+  <title>Twiltool</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link href="cover.css" rel="stylesheet">
 </head>
 <style>
+  body {
+    /* background-image: url(NL.png); */
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
 
-body {
-	background-color: #3B444C;
-	color: white;
-}
+  .popuptext {
+    color: lightseagreen;
+    font-size: 16px;
+    font-family: "monospace";
+    line-height: 80%;
+  }
 
-textarea
-{resize:none;
-background-color: #4e565d;
-}
+  #myProgress {
+    width: 100%;
+    background-color: lightseagreen;
+  }
 
-.popuptext
-{
-position: absolute;
-right: 25px;
-top: 200px;
-color: white;
-font-size:16px;
-font-family: "monospace";
-line-height: 80%;
-}
+  #myBar {
+    width: 1%;
+    height: 30px;
+    background-color: #c4c6c9;
+  }
 
-#myProgress {
-width: 100%;
-background-color: #d7d9db;
-}
+  .senttext {
+    color: black;
+    font-family: "monospace";
+  }
 
-#myBar {
-width: 1%;
-height: 30px;
-background-color: #c4c6c9;
-}
+  .senttext2 {
+    color: black;
+    font-family: "monospace";
+  }
 
-footer { 
-opacity: 0.5;
-position: absolute;
-right: 75px;
-top: 230px;
-}
+  .seagreen {
+    background: lightseagreen;
+    color: white;
+  }
 
-.senttext{
-position: absolute;
-left: 25px;
-bottom: 10px;
-color: black;
-font-family: "monospace";
-}
-
-.senttext2{
-position: absolute;
-left: 25px;
-bottom: 25px;
-color: black;
-font-family: "monospace";
-}
-
-.dropdown{
-position: absolute;
-left: 350px;
-top: 100px;	
-}
-
-h1{
-font-family: "Bebas Neue";
-color: white;
-font-size:48px;
-line-height: 20%;
-position: absolute;
-left: 350px;
-top: 5px;	
-}
-
-.Reset{
-position: absolute;
-right: 120px;
-top: 100px;	
-}
-
-.Getresp{
-position: absolute;
-right: 10px;
-top: 100px;	
-}
-
-.Iccid{
-position: absolute;
-left: 80px;
-bottom: 170px; 
-}
-
+  h1 {
+    font-family: "Bebas Neue";
+    font-size: 48px;
+  }
 </style>
 
 <body>
 
-<h1>MASS SMS TOOL</h1>
-<div style="text-align: right">
-<div><button type= "button" id="button" class="Getresp" value="Get Responses" onclick="move();show();myFunction3();myFunction5();"disabled>GET RESPONSES!</div>
-<div><button type= "button" class="Reset" value="Reset" onclick="Reset();">Clear!</div>
-<div><button type= "button" class="Iccid" value="ICCID" onclick="ICCID();">Convert ICCIDs to Phone#'s</div>
+  <main class=" w-100 h-100 flex-column text-center">
+    <h1 class="cover-heading">MASS SMS TOOL</h1>
+    COMMAND:<input type='text' id="mymessagearea" name='message' size="60">
 
- <div class="popuptext" id="myPopup"></div>
-<br>
-<br>
-<br>
-<div class="senttext" style="display:block font-size: 10px"id="nums"></div>
-<div style="display:inline-block" class="senttext2" id="Text">Nothing Sent..</div>
-<div id="myProgress">
-<div style="display: none;" id="myBar"></div>
-</div>
-</div>
+    <input type="button" class="btn btn-light" id="btnEd" value=Send onclick="PrintMessageToScreen();AllowGetResponse();sender();">
+    <select class="dropdown seagreen" style="font-size: 12px;" id="mySelect" onchange="select();">
+      <option Selected disabled> Saved Commands</option>
+      <option disabled> Query Params:</option>
+      <option value="POLL">Poll</option>
+      <option value="DIAG HARDWARE VIASMS REPLYTOME">Check FW</option>
+      <option value="DIAG MODEM VIASMS REPLYTOME">Check Modem</option>
+      <option value="DIAG PARAMS=GPRS_APN VIASMS REPLYTOME">Check APN</option>
+      <option value="DIAG PARAMS=TFTP_DATA_SERVER_IP VIASMS REPLYTOME">Check IP/port</option>
+      <option value="DIAG PARAMS=FAKE_IGNITION VIASMS REPLYTOME">Check Ignition method</option>
+      <option value="DIAG STATE VIASMS REPLYTOME">Check State</option>
+      <option value="DIAG PARAMS=CAN_ENABLE VIASMS REPLYTOME">Check Vitals</option>
+      <option value="DIAG ALLPARAMS VIAEMAIL (place your email here)">Get all params to email</option>
+      <option value="DIAG PARAMS=PARAM_RESYNC_TIME VIASMS REPLYTOME">Check Param ReSync</option>
+      <option value="DIAG STATE VIASMS REPLYTOME">Check State</option>
+      <option value="DIAG PARAMS=500 VIASMS REPLYTOME">Check Config Version</option>
 
-<form method=post action=""example.htm">
-<table border=0>
-<tr>
-<td>Message</td>
-<td><input type='text' id="mymessagearea"  name='message'size="60"><br></td>
-<td><input type= "button" id="btnEd" value=Send onclick="myFunction();myFunction2();sender();"></td>
-</tr>
+      <option disabled>Set Params:</option>
+      <option value="AT!GXAPP SETPARAM GPRS_APN=fieldtechnologies.cxn;">Set Telenor APN</option>
+      <option value="AT!GXAPP SETPARAM GPRS_APN=fieldtech.globalm2m.net;">Set Jasper APN</option>
+      <option value="AT!GXAPP SETPARAM GPRS_APN=internet.cxn">Set Telenor Public APN(for leaving VPN)</option>
+      <option value="SETPARAM PERIODIC_BACKUP=3600;">Save Config to memory every hour</option>
+      <option value="SETPARAM PARAM_RESYNC_TIME=0">Disable Param Sync</option>
+      <option value="SETPARAM 70=x01.xFD.x00.x00.15.x40;">Check for DTC every 15mins</option>
+      <option value="SETPARAM RESETCAN2">Use Real Odometer</option>
+      <option value="SETPARAM USE_ECU_SPEED_RPM=0.0">USE GPS Speed</option>
+      <option value="SETPARAM FAKE_IGNITION=60.2.100.0">Set OBD IGNITION</option>
+      <option value="SETPARAM FAKE_IGNITION=0.0.0.0">Set Wired IGNITION</option>
+      <option value="SETPARAM CAN_ENABLE=0">Disable Vitals</option>
+      <option value="SETPARAM CAN_ENABLE=x01.xFD.x00.x00.15.x40">Enable Vitals</option>
+      <option value="SETPARAM 52=ftpservice;53=E!nQ5gbp;7=64.87.28.100.x00.x21;54=64;">Point to FTP Server</option>
+      <option value="SETPARAM TFTP_DATA_SERVER_IP=192.168.1.4.31.156">Point to FLX port 8092</option>
+      <option value="SETPARAM TFTP_DATA_SERVER_IP=192.168.1.4.32.00">Point to FLX port 8192</option>
+      <option value="SETPARAM UART_BAUD=3; UART_FUNCTION=15">Enable Garmin</option>
+      <option value="SETPARAM BACKUPNVRAM">Save settings to backup memory</option>
 
-<select class="dropdown" id= "mySelect"onchange="select();">
-<option >Saved Commands</option>
-<option >Query Params:</option>
+      <option value="SETRELAYDRIVE1ON">Starter Disable Activated</option>
+      <option value="SETRELAYDRIVE1OFF">Starter Disable Deactivated</option>
+      <option value="AT!GXAPP DUMPQ DETAILED STARTTID xxxxx ENDID xxxxx VIAUDP">Dumpq selection</option>
+      <option value="RESYNCNOW">Force Param Sync</option>
+      <option disabled>FTP Params:</option>
+      <option value="GETFILE VIAFTP 64.87.28.100 FILENAME VITALS82018NEW.CFG">FTP Vitals Config</option>
+      <option value="GETFILE VIAFTP 64.87.28.100 FILENAME 3WIRE82018.CFG">FTP 3Wire Config</option>
+      <option value="GETFILE VIAFTP 64.87.28.100 FILENAME STANDARD82018.CFG">FTP OBD Standard Config</option>
 
-  <option value="">Option1</option>
-  <option value="">Option2</option>
-  <option value="">Option3</option>
-  <option value="">Option4</option>
-  <option value="">Option5</option>
-  <option value="">Option6</option>
-  <option value="">Option7</option>
-  <option value="">Option8</option>
-  <option value="">Option9</option>
-  <option >-----------------------</option>
-</select>
-  
-   <tr>
-  <td>Recipients</td>
-  <td><textarea rows=40 id="myrecipients" cols=40 name="recipients"></textarea></td>
-  </tr>
-   </table>
-   </form>
-        
+      <option disabled>Reset Params:</option>
+      <option value="RESETGNX5"> Soft Reset</option>
+      <option value="RESETGPS">Reset GPS modem</option>
+      <option value="RESETCOMM">Reset Comm</option>
+      <option value="SETTIMEUNIX (unixtimehere without parenthesis)">GPS Rollover Fix</option>
 
-<p id="forcsv"></p> 
- </body>
+      <option value="RESETGNX5 FACTORY"> Factory Reset</option>
 
- <footer>
-<img style="text-align: right"src="NL.png" alt="NL"></p>
-</footer>
-  
+    </select>
 
-  <script>
-  	var myVar;
-  	const { ipcRenderer } = require('electron');
-    function ICCID(){
-    var  argy="";
-    document.getElementById("forcsv").innerHTML = "";
-    var k =document.getElementById("myrecipients").value;
-    document.getElementById("forcsv").innerHTML = k;
-    let dude = k;
-    var argy="";
-    ipcRenderer.send('iccid-message', dude);
-    ipcRenderer.on('iccid-reply', (event, arg) => {
-    argy+= "+" + arg +"\n"; 
-    document.getElementById('myrecipients').value = argy;
-
-    })
-
-    }
+    <button type="button" class="Reset btn seagreen" value="Reset" onclick="Reset();">Clear!</button>
+    <div class="senttext text-muted" style="display:block; font-size: 10px" id="nums"></div>
+    <div style="display:inline-block" class="senttext2 text-muted" id="Text">Nothing Sent..</div>
 
 
-function select(){
-var o = document.getElementById("mySelect").value;
-document.getElementById("mymessagearea").value =  o;
-}
+    <div style="text-align: left; margin-left: 25px;">Recipients:
+      <textarea class="form-inline text-muted" style="font-size: 11px; margin-left: 15px;" rows=30 id="myrecipients"
+        cols=22 name="recipients" placeholder="Enter Phone nums or Serial"
+        onchange="GetResponses();AllowGetResponse();"></textarea>
+      <button type="button" class="Iccid btn seagreen" style="font-size: 9px;" value="ICCID" onclick="ICCID();">Convert
+        ICCIDs to Phone#'s</button>
 
+    </div>
 
-function Reset(){
-document.getElementById('myPopup').innerHTML ="";
-document.getElementById("mymessagearea").value = "";
-document.getElementById("myrecipients").value = "";
-document.getElementById("forcsv").innerHTML = "";
-}
-
-function myFunction5() {
-myVar = setTimeout(alertFunc, 1000);
-}
-
-function myFunction3() {
-		var batch ="";
-		document.getElementById('myPopup').innerHTML ="";
-		var t =document.getElementById("myrecipients").value;
-  	let get = t; 
-  	var argnew="";
-  	ipcRenderer.send('History-message', get);
-  	ipcRenderer.on('History-reply', (event, arg) => {
-  	argnew+="<br>"+ arg; 
-    document.getElementById('myPopup').innerHTML =argnew; 
-})
-
-}
-  	
-function myFunction() {
- var x =( "Sent:  "+  document.getElementById("mymessagearea").value);
-  document.getElementById("Text").innerHTML  = x;
-}
-
-function myFunction2() {
-button.removeAttribute("disabled");
-var y =(document.getElementById("myrecipients").value);
-document.getElementById("nums").innerHTML  = y;
-}
-
-function sender(){  		 
-  var n =document.getElementById("myrecipients").value;
-  document.getElementById("nums").innerHTML  = n;
-  let Num = n; 
-  ipcRenderer.send('Numbers', Num);
-	var z = document.getElementById("mymessagearea").value;
-  document.getElementById("Text").innerHTML  = z;
-  let Data=z; 
-  ipcRenderer.send('Payload', Data);
-  }
-
-function move() {
-  var elem = document.getElementById("myBar");   
-  var width = 1;
-  var id = setInterval(frame, 10);
-  function frame() {
-    if (width >= 100) {
-      clearInterval(id);
-    } else {
-      width++; 
-      elem.style.width = width + '%'; 
-    }}
-    myVar = setTimeout(kill, 1500);
-  }
-
-function show(){
-document.getElementById("myBar").style.display = "block";
-}
-
-function kill(){
-document.getElementById("myBar").style.display = "none";
-}
-
-</script>
+    <button type="button" class="btn seagreen" id="button" class="Getresp" value="Get Responses"
+      onclick="move();show();GrabPhoneNums();ClearOutMainVar();" disabled>GET RESPONSES!</button>
+    
+    <div class="popuptext" id="myPopup"></div>
+    <div id="myProgress"></div>
+    <div style="display: none;" id="myBar"></div>
+    <p id="forcsv"></p>
+  </main>
+</body>
+<script src="page.js"></script>
 
 </html>
