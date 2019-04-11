@@ -1,19 +1,18 @@
 const { app, BrowserWindow } = require('electron');
-var path = require ('path')
+let path = require ('path')
 // Your Account Sid and Auth Token from twilio.com/console
 const accountSid = 'Twilio Account SID Here';
 const authToken = 'Twilio Auth Token Here';
 const forceDelivery= true; //allows for sending to any phone number even if it looks like a Landline
 const client = require('twilio')(accountSid, authToken, forceDelivery);
-var body ="";
+let body ="";
 const twilnumber = '+Enter twilio number';
-var number = "";
+let number = "";
 let win;
 const {ipcMain} = require('electron');
 global.responseString ="";
 const Menu = require('electron').Menu
-var csv = require("csv-query");
-
+let csv = require("csv-query");
 
 
 ipcMain.on('Numbers', (event, arg) => {
@@ -21,7 +20,7 @@ ipcMain.on('Numbers', (event, arg) => {
 });
 
 ipcMain.on('Payload', (event, arg) => {
-  var body = arg;
+  let body = arg;
   let phoneArr =number;
     phoneArr.forEach(numberResult => {
       client.messages.create(
@@ -34,11 +33,11 @@ ipcMain.on('Payload', (event, arg) => {
 });
   
 ipcMain.on("History-message", (event, arg) => {
-  var history = arg.split("\n");
+  let history = arg.split("\n");
   let PhoneNum = number;
-  var today = new Date();
+  let today = new Date();
 
-  var day = today.getUTCDate();
+  let day = today.getUTCDate();
 
   PhoneNum.forEach(PhoneNumber => {
     client.messages.each(
@@ -52,7 +51,7 @@ ipcMain.on("History-message", (event, arg) => {
 
 
 ipcMain.on("iccid-message", (event, arg) => {
-  var msidns = arg.split("\n");
+  let msidns = arg.split("\n");
   let IccidList = msidns;
   IccidList.forEach(function(IndividualIccid) {
     console.log("IccidList?: " + individualDog);
@@ -63,7 +62,7 @@ ipcMain.on("iccid-message", (event, arg) => {
         return db.findOne({ ICCID: individualDog });
       })
       .then(function(record) {
-        var xtra = record["MSISDN"];
+        let xtra = record["MSISDN"];
         console.log(xtra);
         event.sender.send("iccid-reply", xtra);
       })
